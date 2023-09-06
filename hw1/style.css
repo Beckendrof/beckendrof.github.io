@@ -40,7 +40,7 @@ nav a:nth-of-type(1){
 
 .cutlery{
     margin: 0 65px;
-    background-image: url("Cutlery.png");
+    background-image: url("img/Cutlery.png");
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: 1230px;
