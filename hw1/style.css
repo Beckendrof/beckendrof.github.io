@@ -1,22 +1,23 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body{
+body {
     height: 1180px;
     width: 1360px;
+    font-family: 'Rozha One', serif;
 }
 
-.title{
-    margin: 45px 65px 25px 65px;
+.title {
+    margin: 35px 65px 20px 65px;
     color: rgb(21, 60, 185);
-    font-size: 45px;
+    font-size: 50px;
     font-weight: bold;
 }
 
-hr{
+hr {
     border: none;
     height: 1px;
     background: black;
@@ -24,21 +25,20 @@ hr{
 
 nav {
     margin: 30px 65px 50px 65px;
-    font-family: sans-serif;
-    /* align-items: left; */
 }
 
 nav a {
+    font-family: 'Arimo', sans-serif;
     margin-right: 20px;
     text-decoration: none;
     color: black;
 }
 
-nav a:nth-of-type(1){
+nav a:nth-of-type(1) {
     color: rgb(21, 60, 185);
 }
 
-.cutlery{
+.cutlery {
     margin: 0 65px;
     background-image: url("https://csci571.com/hw/hw3/images/Cutlery.png");
     background-attachment: fixed;
@@ -53,71 +53,70 @@ nav a:nth-of-type(1){
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 70px 0 0 60px;
+    padding: 55px 0 0 60px;
 }
 
-.column-left{
+.column-left {
     color: rgb(21, 60, 185);
-    font-size: 4.3em;
-    font-weight: 950;
+    font-size: 4.5em;
+    /* font-weight: 950; */
     max-width: 40%;
     overflow-wrap: normal;
     line-height: 90px;
-    line-break: auto;
-    letter-spacing: 3px;
+    /* letter-spacing: 3px; */
 }
 
 .cutlery-container a {
+    font-family: 'Arimo', sans-serif;
     display: inline-block;
     padding: 0.8em 1.4em;
     text-decoration: none;
     background-color: white;
     color: black;
-    font-weight: 500;
+    font-weight: 550;
     font-size: 1.3em;
-    margin-top: 75px;
+    margin-top: 72px;
 }
 
-.cutlery-container button{
+.cutlery-container button {
     outline: none;
     background-color: white;
     padding: 20px 25px;
     margin: 0 80px 20px 20px;
 }
 
-.grid{
+.grid {
     margin: 0 65px;
 }
 
-.grid-title{
+.grid-title {
     text-align: center;
     color: rgb(21, 60, 185);
     padding-top: 65px;
     padding-bottom: 45px;
     padding-left: 40px;
-    font-size: 2.3em;
-    font-weight:900;
-    letter-spacing: 0.5px;
+    font-size: 2.5em;
+    font-weight: 900;
+    /* letter-spacing: 0.5px; */
 }
 
-.grid-container{    
+.grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 40px;
     row-gap: 40px;
 }
 
-.grid-item{
+.grid-item {
     display: flex;
     flex-direction: column;
 }
 
-.grid-item a{
+.grid-item a {
     text-decoration: none;
     text-align: center;
     color: rgb(21, 60, 185);
     padding: 74px;
-    font-size: 1.55em;
-    font-weight: bold;
+    font-size: 1.9em;
+    font-weight: 500;
 }
-
