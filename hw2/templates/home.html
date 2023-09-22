@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='title'>
+    <img src="https://1000logos.net/wp-content/uploads/2018/10/Ebay-Logo-1-1024x640.png" alt="">
+    <h1>Shopping</h1>
+</div>
+<div class="centered">
+    <form>
+        <div>Keywords<span class="red-star">*</span>: <input type="text"></div>
+
+        <div>Price Range: From <input type="number"> to <input type="number"></div>
+
+        <div>Condition:
+            <input type="checkbox" id="new"><label for="new">New</label>
+            <input type="checkbox" id="used"><label for="used">Used</label>
+            <input type="checkbox" id="veryGood"><label for="veryGood">Very Good</label>
+            <input type="checkbox" id="good"><label for="good">Good</label>
+            <input type="checkbox" id="acceptable"><label for="acceptable">Acceptable</label>
+        </div>
+
+        <div>Seller: <input type="checkbox" id="returnAccepted"><label for="returnAccepted">Return Accepted</label>
+        </div>
+        <div>Shipping:
+            <input type="checkbox" id="freeShipping"><label for="freeShipping">Free</label>
+            <input type="checkbox" id="expeditedShipping"><label for="expeditedShipping">Expedited</label>
+        </div>
+        <div>Sort by:
+            <select>
+                <option>Best Match</option>
+            </select>
+        </div>
+        <div>
+            <button type="reset">Clear</button>
+            <button type="submit">Search</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
