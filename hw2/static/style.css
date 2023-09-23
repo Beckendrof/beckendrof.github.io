@@ -29,17 +29,23 @@ body {
     font-size: 32px;
 }
 
-.centered {
-    text-align: center;
-    border: 1px solid black;
-    font-weight: bold;
-    margin: 0;
+.table td {
+    align-items: center;
 }
 
 .red-star {
     color: red;
 }
 
-.centered *{
+.centered * {
     padding: 5px;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
 }
