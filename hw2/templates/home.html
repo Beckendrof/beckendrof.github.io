@@ -1,61 +1,65 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block home %}
 <div class='title'>
     <img src="https://1000logos.net/wp-content/uploads/2018/10/Ebay-Logo-1-1024x640.png" alt="">
     <h1>Shopping</h1>
 </div>
 <table>
-    <form>
+    <form action="search">
         <tr>
-            <td>Keywords<span class="red-star">*</span>: <input type="text"></td>
+            <td class="bold-labels">Keywords<span class="red-star">*</span>: <input type="text"></td>
         </tr>
         <tr>
-            <td>Price Range: From <input type="number"> to <input type="number"></td>
+            <td><span class="bold-labels">Price Range:</span> From <input class="price" type="number"> to <input
+                    class="price" type="number"></td>
         </tr>
         <tr>
             <td>
-                Condition:
-                <input type="checkbox" id="new"><label for="new">New</label>
-                <input type="checkbox" id="used"><label for="used">Used</label>
-                <input type="checkbox" id="veryGood"><label for="veryGood">Very Good</label>
-                <input type="checkbox" id="good"><label for="good">Good</label>
-                <input type="checkbox" id="acceptable"><label for="acceptable">Acceptable</label>
+                <span class="bold-labels">Condition:</span>
+                <input type="checkbox" id="new"><label for="new"> New</label>
+                <input type="checkbox" id="used"><label for="used"> Used</label>
+                <input type="checkbox" id="veryGood"><label for="veryGood"> Very Good</label>
+                <input type="checkbox" id="good"><label for="good"> Good</label>
+                <input type="checkbox" id="acceptable"><label for="acceptable"> Acceptable</label>
 
             </td>
         </tr>
         <tr>
             <td>
-                Seller: <input type="checkbox" id="returnAccepted"><label for="returnAccepted">Return
+                <span class="bold-labels">Seller:</span> <input type="checkbox" id="returnAccepted"><label
+                    for="returnAccepted"> Return
                     Accepted</label>
 
             </td>
         </tr>
         <tr>
             <td>
-                Shipping:
-                <input type="checkbox" id="freeShipping"><label for="freeShipping">Free</label>
-                <input type="checkbox" id="expeditedShipping"><label for="expeditedShipping">Expedited</label>
+                <span class="bold-labels">Shipping:</span>
+                <input type="checkbox" id="freeShipping"><label for="freeShipping"> Free</label>
+                <input type="checkbox" id="expeditedShipping"><label for="expeditedShipping"> Expedited</label>
 
             </td>
         </tr>
         <tr>
             <td>
-                Sort by:
-                <select>
+                <span class="bold-labels">Sort by:</span>
+                <select class=sort-by>
                     <option>Best Match</option>
+                    <option>Price: highest first</option>
+                    <option>Price + Shipping: highest first</option>
+                    <option>Price + Shipping: lowest first</option>
                 </select>
 
             </td>
         </tr>
         <tr>
             <td>
-
                 <button type="reset">Clear</button>
                 <button type="submit">Search</button>
-
             </td>
         </tr>
     </form>
 </table>
-{% endblock content %}
+{% block search%}{% endblock  %}
+{% endblock home %}

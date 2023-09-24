@@ -46,6 +46,49 @@ th,
 td {
     border: 1px solid black;
     border-collapse: collapse;
-    padding: 5px;
+    padding: 8px 20px;
     text-align: center;
+
+}
+
+td *{
+    padding: 2px;
+}
+
+.price{
+    width: 60px;
+}
+
+.bold-labels{
+    font-weight: bold;
+}
+
+.sort-by{
+    width: 200px;
+    text-align: center;
+}
+
+td button{
+    background-color: rgb(218, 217, 218);
+    border: 1px;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+td button:hover{
+    background-color: rgb(102, 172, 91);
+    color: white;
+}
+
+.search-title{
+    padding: 20px 0 10px 0;
+}
+
+.search-title p{
+    font-size: x-large;
+}
+
+hr{    
+    width: 600px;
+    margin: 0;
 }
