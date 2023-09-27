@@ -89,6 +89,46 @@ td button:hover{
 }
 
 hr{    
-    width: 600px;
-    margin: 0;
+    width: 700px;
+    margin: 0 0 8px 0;
+}
+
+.results{
+    width: 700px;
+    border: 1px solid black;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    background-color: rgb(238, 236, 238);
+    -moz-box-shadow: 0 0 5px #ccc;
+    -webkit-box-shadow: 0 0 5px #ccc;
+    box-shadow: 0 0 5px #ccc;
+    border-radius: 5px;
+}
+
+.image-container {
+    display: flex;
+    flex: 0 0 20%;
+    overflow: hidden; /* Hide any overflow beyond the container */
+    justify-content:center;
+    align-items:center;
+}
+
+.image-container img{
+    max-width: 80%; /* Set the maximum width to 100% of the container's width */
+    max-height: 80%; /* Set the maximum height to 100% of the container's height */
+    display: block; /* Remove any extra spacing caused by inline elements */
+    margin: 0 auto; /* Center the image horizontally (optional) */
+    border: 2px solid grey;
+}
+
+.result-details{
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
 }
