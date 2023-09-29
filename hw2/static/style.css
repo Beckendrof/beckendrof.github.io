@@ -152,6 +152,12 @@ hr{
     opacity: 0.5;
 }
 
+.condition{
+    width: 25px;
+    background-color: rgb(238, 236, 238);
+    position: 10px 10px;
+}
+
 #showMoreButton{
     display: none;
     margin-bottom: 10px;

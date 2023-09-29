@@ -124,7 +124,8 @@ function displayItems(data, keyword, outerResults, button) {
         } catch (error) {
             condition = 'Unknown';
         }
-        const topRated = item.topRatedListing[0] === 'true' ? 'Top Rated' : 'Not Top Rated';
+        
+        
         const price = parseFloat(item.sellingStatus[0].convertedCurrentPrice[0].__value__);
 
         let shippingCost = 0.00;
@@ -155,7 +156,11 @@ function displayItems(data, keyword, outerResults, button) {
         categoryContainer.innerHTML = `Category: <i>${category}</i> <img class="redirect" src="https://www.csci571.com/hw/hw6/images/redirect.png">`;
 
         const conditionContainer = document.createElement('p');
-        conditionContainer.textContent = `Condition: ${condition}`;
+        if (item.topRatedListing[0] === 'true') {
+            conditionContainer.innerHTML = `Condition: ${condition} <img class="condition" src="https://www.csci571.com/hw/hw6/images/topRatedImage.png">`;
+        } else {
+            conditionContainer.innerHTML = `Condition: ${condition}`;
+        }
 
         const priceContainer = document.createElement('p');
         priceContainer.innerHTML = `<strong>Price: $${price}</strong>`;
