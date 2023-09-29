@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Ebay</title>
+</head>
+<body>
+    <div class='title'>
+        <img src="https://www.csci571.com/hw/hw6/images/eBayLogo.png" alt="">
+        <h1>Shopping</h1>
+    </div>
+    <table>
+        <form id="searchForm">
+            <tr>
+                <td class="bold-labels">Keywords<span class="red-star">*</span>: <input type="text" name="keyword" id="keyword" required></td>
+            </tr>
+            <tr>
+                <td><span class="bold-labels">Price Range:</span> From <input class="price" type="number" id="minPrice"> to <input
+                        class="price" type="number" id="maxPrice"></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="bold-labels">Condition:</span>
+                    <input type="checkbox" id="new" name="condition"><label for="new"> New</label>
+                    <input type="checkbox" id="used" name="condition"><label for="used"> Used</label>
+                    <input type="checkbox" id="veryGood" name="condition"><label for="veryGood"> Very Good</label>
+                    <input type="checkbox" id="good" name="condition"><label for="good"> Good</label>
+                    <input type="checkbox" id="acceptable" name="condition"><label for="acceptable"> Acceptable</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="bold-labels">Seller:</span> <input type="checkbox" id="returnAccepted"><label
+                        for="returnAccepted"> Return
+                        Accepted</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="bold-labels">Shipping:</span>
+                    <input type="checkbox" id="freeShipping"><label for="freeShipping"> Free</label>
+                    <input type="checkbox" id="expeditedShipping"><label for="expeditedShipping"> Expedited</label>
+    
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="bold-labels">Sort by:</span>
+                    <select class=sort-by id="sortBy">
+                        <option>Best Match</option>
+                        <option>Price: highest first</option>
+                        <option>Price + Shipping: highest first</option>
+                        <option>Price + Shipping: lowest first</option>
+                    </select>
+    
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="reset" class="button">Clear</button>
+                    <button type="submit" class="button">Search</button>
+                </td>
+            </tr>
+        </form>
+    </table>
+    <div class="search-title" id="results">
+        <!-- <p><b><span id="totalResultsFound"></span> Results found for <i><span id="searchKeyword"></span></i></b></p>
+        <hr> -->
+    </div>
+    <div class="outer-results">
+        <!-- Result items will be added here dynamically -->
+    </div>
+    <button id="showMoreButton" class="button">Show More</button>
+</body>
+<script src="/static/script.js"></script>
+</html>

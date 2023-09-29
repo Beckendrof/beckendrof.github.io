@@ -20,13 +20,13 @@ body {
 }
 
 .title img {
-    width: 12%;
-    margin-right: 8px;
+    width: 35%;
+    margin-right: 2px;
 }
 
 .title h1 {
     padding-top: 10px;
-    font-size: 32px;
+    font-size: 35px;
 }
 
 .table td {
@@ -68,7 +68,7 @@ td *{
     text-align: center;
 }
 
-td button{
+.button{
     background-color: rgb(218, 217, 218);
     border: 1px;
     border-radius: 5px;
@@ -81,46 +81,60 @@ td button:hover{
 }
 
 .search-title{
-    padding: 20px 0 10px 0;
+    padding: 20px 0 5px 0;
+    text-align: center;
 }
 
 .search-title p{
+    margin-bottom: 20px;
     font-size: x-large;
 }
 
 hr{    
     width: 700px;
-    margin: 0 0 8px 0;
 }
 
 .results{
     width: 700px;
+    margin-top: 5px;
     border: 1px solid black;
     padding: 30px 20px;
     display: flex;
     flex-direction: row;
     gap: 20px;
     background-color: rgb(238, 236, 238);
-    -moz-box-shadow: 0 0 5px #ccc;
+    /* -moz-box-shadow: 0 0 5px #ccc;
     -webkit-box-shadow: 0 0 5px #ccc;
-    box-shadow: 0 0 5px #ccc;
+    box-shadow: 0 0 5px #ccc; */
     border-radius: 5px;
+}
+
+.results:hover {
+    -moz-box-shadow: 0 0 10px #ccc;
+    -webkit-box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 0 10px #ccc;
 }
 
 .image-container {
     display: flex;
     flex: 0 0 20%;
-    overflow: hidden; /* Hide any overflow beyond the container */
     justify-content:center;
     align-items:center;
+    transition: transform .5s;
+    height: 150px;
 }
 
 .image-container img{
-    max-width: 80%; /* Set the maximum width to 100% of the container's width */
-    max-height: 80%; /* Set the maximum height to 100% of the container's height */
-    display: block; /* Remove any extra spacing caused by inline elements */
-    margin: 0 auto; /* Center the image horizontally (optional) */
+    max-width: 90%; 
+    max-height: 90%; 
+    display: block; 
+    margin: 0 auto; 
     border: 2px solid grey;
+    transition: transform 1s;
+}
+
+.image-container img:hover{
+    transform: scale(2.5);
 }
 
 .result-details{
@@ -131,4 +145,15 @@ hr{
     flex-direction: column;
     justify-content: space-between;
     gap: 15px;
+}
+
+.redirect{
+    width: 15px;
+    opacity: 0.5;
+}
+
+#showMoreButton{
+    display: none;
+    margin-bottom: 10px;
+    font-size: medium;
 }

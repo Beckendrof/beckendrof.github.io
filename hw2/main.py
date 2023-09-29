@@ -1,60 +1,34 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 import requests
 
 endpoint = 'https://svcs.ebay.com/services/search/FindingService/v1'
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template('home.html')
+    return send_from_directory('static', 'index.html')
 
-@app.route('/search')
+@app.route('/search', methods=['GET'])
 def search():
-    data = request.args.get('keyword')
-    response = call(data)
-    totalResultsFound = response["findItemsAdvancedResponse"][0]["paginationOutput"][0]["totalEntries"][0]
-    results = response['findItemsAdvancedResponse'][0]['searchResult'][0]["item"]
-    # Assume the response is a list of items. Adjust as necessary
+    #Query parameters
+    query_parameters = request.args
 
-    extractedData = []
+    #Item Filters
+    item_filters = {}
+    item_filter_counter = 0
+    for key, value in query_parameters.items():
+        if key not in ('keyword', 'sortOrder'):
+            item_filters[f'itemFilter({item_filter_counter}).name'] = key
+            item_filters[f'itemFilter({item_filter_counter}).value'] = value
+            item_filter_counter += 1
 
-    for item in results:
-        imageURL = item["galleryURL"][0]
-        title = item["title"][0]
-        category = item["primaryCategory"][0]["categoryName"][0]
-        ebayLink = item["viewItemURL"][0]
-        condition = item["condition"][0]["conditionDisplayName"][0]
-        topRated = "Top Rated" if item["topRatedListing"][0] == "true" else "Not Top Rated"
-        price = float(item["sellingStatus"][0]["convertedCurrentPrice"][0]["__value__"])
+    #API call
+    response = call(query_parameters.get('keyword'), query_parameters.get('sortOrder'), item_filters)
 
-        try:
-            shippingCost = float(item["shippingInfo"][0]["shippingServiceCost"][0]["__value__"])
-        except:
-            shippingCost = 0.00
+    return response
 
-        # imageToDisplay = "topRatedImage.jpg" if topRated else imageURL
-
-        # Format the price string
-        priceString = f"Price: ${price:.2f}"
-        if shippingCost >= 0.01:
-            priceString += f" (+ ${shippingCost:.2f} for shipping)"
-
-        extractedData.append({
-            "imageURL": imageURL,
-            "title": title,
-            "category": category,
-            "ebayLink": ebayLink,
-            "condition": condition,
-            "topRated": topRated,
-            "price": price,
-        })
-
-        print(extractedData[0]['imageURL'])
-
-    return render_template('search.html', results=extractedData, totalResultsFound=totalResultsFound, keyword=data)
-
-def call(keyword):
+def call(keyword, sortOrder, item_filters):
     params = {
         'OPERATION-NAME': 'findItemsAdvanced',  
         'SERVICE-VERSION': '1.0.0',
@@ -62,11 +36,14 @@ def call(keyword):
         'RESPONSE-DATA-FORMAT': 'JSON',
         'REST-PAYLOAD': '',
         'keywords': keyword,
+        'sortOrder': sortOrder,
 
         'paginationInput.entriesPerPage': 10,
-        'paginationInput.pageNumber': 1
+        'paginationInput.pageNumber': 1,
     }
 
+    # Add item filters 
+    params.update(item_filters)
     response = requests.get(endpoint, params=params)
 
     if response.status_code == 200: return(response.json())
