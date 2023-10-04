@@ -109,6 +109,15 @@ hr{
     border-radius: 5px;
 }
 
+.condition-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.condition-parent{
+    position: relative;
+}
+
 .results:hover {
     -moz-box-shadow: 0 0 10px #ccc;
     -webkit-box-shadow: 0 0 10px #ccc;
@@ -155,7 +164,9 @@ hr{
 .condition{
     width: 25px;
     background-color: rgb(238, 236, 238);
-    position: 10px 10px;
+    position: absolute;
+    top: -8px;
+    left: 5px;
 }
 
 #showMoreButton{

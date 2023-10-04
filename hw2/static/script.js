@@ -116,7 +116,6 @@ function displayItems(data, keyword, outerResults, button) {
         const imageURL = item.galleryURL[0];
         const title = item.title[0];
         const category = item.primaryCategory[0].categoryName[0];
-        const ebayLink = item.viewItemURL[0];
 
         let condition = '';
         try {
@@ -139,6 +138,8 @@ function displayItems(data, keyword, outerResults, button) {
 
         const resultContainer = document.createElement('div');
         resultContainer.classList.add('results');
+        resultContainer.setAttribute('item-id', item.itemId);
+
 
         const imageContainer = document.createElement('div');
         imageContainer.classList.add('image-container');
@@ -156,8 +157,9 @@ function displayItems(data, keyword, outerResults, button) {
         categoryContainer.innerHTML = `Category: <i>${category}</i> <img class="redirect" src="https://www.csci571.com/hw/hw6/images/redirect.png">`;
 
         const conditionContainer = document.createElement('p');
+        conditionContainer.classList.add('condition-container');
         if (item.topRatedListing[0] === 'true') {
-            conditionContainer.innerHTML = `Condition: ${condition} <img class="condition" src="https://www.csci571.com/hw/hw6/images/topRatedImage.png">`;
+            conditionContainer.innerHTML = `Condition: ${condition} <div class="condition-parent"><img class="condition" src="https://www.csci571.com/hw/hw6/images/topRatedImage.png"></div>`;
         } else {
             conditionContainer.innerHTML = `Condition: ${condition}`;
         }
@@ -176,10 +178,30 @@ function displayItems(data, keyword, outerResults, button) {
 
         outerResults.appendChild(resultContainer);
 
+        // Create a click event listener for each result
+        resultContainer.addEventListener('click', function () {
+            // Access the Item ID from the data attribute
+            const itemId = resultContainer.getAttribute('item-id');
+            console.log(itemId)
+
+            // Construct the Flask URL with the itemId
+            let url = `/searchItem?itemid=${encodeURIComponent(itemId)}`; // Replace with your actual Flask endpoint
+
+            // Fetch the data using the constructed URL
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data as needed
+                    displayItem(data)
+                })
+                .catch(error => console.error('Error:', error));     
+        });
+
         if (index >= 3) {
             resultContainer.style.display = 'none'; // Hide items after the first 3
         }
     });
+
     if (totalResults <= 3) {
         button.style.display = 'none'
     } else {
@@ -250,4 +272,35 @@ function constructURL(queryString, minPriceInput, maxPriceInput, checkboxes, sel
     }
 
     return url;
+}
+
+function displayItem(data) {
+    console.log(data)
+    // const itemDetails = document.getElementById('div');
+
+    // // Create a table for item details
+    // const table = document.createElement('table');
+    // table.classList.add('item-details-table');
+
+    // // Populate the table with item details (replace with your data)
+    // // You can loop through itemData and create rows and cells as needed
+    // // For example:
+    // // const row = table.insertRow();
+    // // const cell1 = row.insertCell(0);
+    // // const cell2 = row.insertCell(1);
+    // // cell1.textContent = 'Item Name';
+    // // cell2.textContent = itemData.itemName;
+
+    // // Create a button to close the overlay
+    // const closeButton = document.createElement('button');
+    // closeButton.textContent = 'Close Item Details';
+    // closeButton.addEventListener('click', function () {
+    //     // Remove the overlay when the button is clicked
+    //     overlay.remove();
+    // });
+
+    // // Append the table and button to the overlay
+    // overlay.appendChild(closeButton);
+    // overlay.appendChild(table);
+    // document.body.appendChild(overlay);
 }
