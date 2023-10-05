@@ -25,6 +25,7 @@ document.getElementById('searchForm').addEventListener('submit', function (e) {
     fetch(generatedURL)
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             displayItems(data, keyword, outerResults, button); //display results
         })
         .catch(error => console.error('Error:', error));
@@ -167,7 +168,7 @@ function displayItems(data, keyword, outerResults, button) {
         }
 
         const priceContainer = document.createElement('p');
-        priceContainer.innerHTML = `<strong>Price: $${price}</strong>`;
+        priceContainer.innerHTML = `<strong>${priceString}</strong>`;
 
         imageContainer.appendChild(image);
         resultDetails.appendChild(titleContainer);
@@ -238,6 +239,27 @@ function constructURL(queryString, minPriceInput, maxPriceInput, checkboxes, sel
         acceptable: 6000
     };
 
+    const checkedConditions = Array.from(checkboxes).map(checkbox => conditionMapping[checkbox.getAttribute('id')]);
+
+    const params = {};
+    let argCount = 0;
+    let value = 0;
+
+    if (checkedConditions.length > 0) {
+        params[`itemFilter(${argCount}).name`] = "Condition";
+
+        for (const condition of checkedConditions) {
+            params[`itemFilter(${argCount}).value(${value})`] = condition;
+            value++;
+        }
+
+        argCount++;
+    }
+
+    for (const [key, value] of Object.entries(params)) {
+        url += `${key}=${value}&`;
+    }
+
     const sortByMapping = {
         "Best Match": "BestMatch",
         "Price: highest first": "CurrentPriceHighest",
@@ -246,43 +268,39 @@ function constructURL(queryString, minPriceInput, maxPriceInput, checkboxes, sel
     }
 
     // Extract the names of the checked checkboxes and map them to values
-    const checkedConditionValues = Array.from(checkboxes).map(checkbox => conditionMapping[checkbox.getAttribute('id')]);
 
     if (sortBy.value) {
         url += `sortOrder=${encodeURIComponent(sortByMapping[sortBy.value])}&`;
     }
 
     if (free.checked) {
-        url += `FreeShippingOnly=true&`;
+        url += `itemFilter(${encodeURIComponent(argCount)}).name=FreeShippingOnly&itemFilter(${encodeURIComponent(argCount)}).value(0)=true&`;
+        argCount++
     }
 
     if (expeditedShipping.checked) {
-        url += `ExpeditedShippingType=Expedited&`;
+        url += `itemFilter(${encodeURIComponent(argCount)}).name=ExpeditedShippingType&itemFilter(${encodeURIComponent(argCount)}).value(0)=Expedited&`;
+        argCount++
     }
 
     if (minPriceInput) {
-        url += `MinPrice=${encodeURIComponent(minPriceInput)}&`;
+        url += `itemFilter(${encodeURIComponent(argCount)}).name=MinPrice&itemFilter(${encodeURIComponent(argCount)}).value(0)=${encodeURIComponent(minPriceInput)}&`;
+    argCount++
     }
 
     if (maxPriceInput) {
-        url += `MaxPrice=${encodeURIComponent(maxPriceInput)}&`;
+        url += `itemFilter(${encodeURIComponent(argCount)}).name=MaxPrice&itemFilter(${encodeURIComponent(argCount)}).value(0)=${encodeURIComponent(maxPriceInput)}&`;
+    argCount++
     }
 
     if (seller.checked) {
-        url += `ReturnsAcceptedOnly=true&`;
+        url += `itemFilter(${encodeURIComponent(argCount)}).name=ReturnsAcceptedOnly&itemFilter(${encodeURIComponent(argCount)}).value(0)=true&`;
+        argCount++
     }
 
-    let conditionCounter = 1;
+    // Remove the trailing "&" from the URL
+    url = url.slice(0, -1);
 
-    // Add each checked condition value to the URL
-    checkedConditionValues.forEach(conditionValue => {
-        url += `Condition${conditionCounter}=${encodeURIComponent(conditionValue)}&`;
-        conditionCounter++;
-    });
-
-    if (url.endsWith('&')) {
-        url = url.slice(0, -1);
-    }
 
     return url;
 }
@@ -345,3 +363,4 @@ document.getElementById('searchForm').addEventListener('reset', function () {
     page.style.display = "none"
     itemContainer.style.display = "none"
 })
+

@@ -14,19 +14,14 @@ def home():
 def search():
     #Query parameters
     query_parameters = request.args
-
-    #Item Filters
-    item_filters = {}
-    item_filters['itemFilter(0).name'] = 'Condition'
-    item_filter_counter = 0
+    print(query_parameters)
+    itemfilters = {}
     for key, value in query_parameters.items():
-        if key != 'keyword' and key != 'sortOrder':
-            if key.startswith('Condition'):
-                item_filters[f'itemFilter(0).value({item_filter_counter})'] = value
-                item_filter_counter += 1
-
+        if key in ['keyword', 'sortOrder']: continue
+        else :
+            itemfilters[key] = value
     #API call
-    response = call(query_parameters.get('keyword'), query_parameters.get('sortOrder'), item_filters)
+    response = call(query_parameters.get('keyword'), query_parameters.get('sortOrder'), itemfilters)
     return response
 
 def call(keyword, sortOrder, item_filters):
@@ -48,17 +43,16 @@ def call(keyword, sortOrder, item_filters):
 
     # Add item filters 
     params.update(item_filters)
+
     # print(params)
     response = requests.get(endpoint, params=params)
 
     if response.status_code == 200: return(response.json())
     else: print("error")
 
-
 @app.route('/searchItem', methods=['GET'])
 def searchItem():
     ItemID = request.args.get('itemid')
-    print(ItemID)
 
     #API call
     response = getItem(ItemID)
