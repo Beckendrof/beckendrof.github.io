@@ -1,12 +1,12 @@
 document.getElementById('searchForm').addEventListener('submit', function (e) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     const button = document.getElementById('showMoreButton');
     const keyword = document.getElementById('keyword').value;
     const maxPriceInput = document.getElementById('maxPrice').value;
     const minPriceInput = document.getElementById('minPrice').value;
     const checkboxes = document.querySelectorAll('input[name="condition"]:checked');
-    const seller = document.getElementById('returnAccepted'); 
+    const seller = document.getElementById('returnAccepted');
     const free = document.getElementById('freeShipping');
     const expeditedShipping = document.getElementById('expeditedShipping');
     const sortBy = document.getElementById('sortBy');
@@ -37,17 +37,17 @@ document.getElementById('searchForm').addEventListener('submit', function (e) {
         if (showMore) {
             allResults.forEach((result, index) => {
                 if (index >= 3) {
-                    result.style.display = 'none'; 
+                    result.style.display = 'none';
                 }
             });
             showMoreButton.textContent = 'Show More';
         } else {
             allResults.forEach(result => {
-                result.style.display = 'flex'; 
+                result.style.display = 'flex';
             });
             showMoreButton.textContent = 'Show Less';
         }
-        showMore = !showMore; 
+        showMore = !showMore;
     });
 });
 
@@ -82,8 +82,10 @@ function updateSearchTitleNoResults(outerResults) {
 }
 
 function displayItems(data, keyword, outerResults, button) {
+    console.log(data)
     const totalResults = data.findItemsAdvancedResponse[0].paginationOutput[0].totalEntries[0];
     const results = data.findItemsAdvancedResponse[0].searchResult[0].item;
+    const page = document.getElementById("page")
 
     if (totalResults == 0) {
         // Update the search title with "No results found"
@@ -123,8 +125,8 @@ function displayItems(data, keyword, outerResults, button) {
         } catch (error) {
             condition = 'Unknown';
         }
-        
-        
+
+
         const price = parseFloat(item.sellingStatus[0].convertedCurrentPrice[0].__value__);
 
         let shippingCost = 0.00;
@@ -154,12 +156,12 @@ function displayItems(data, keyword, outerResults, button) {
         titleContainer.innerHTML = `<strong>${title}</strong>`;
 
         const categoryContainer = document.createElement('p');
-        categoryContainer.innerHTML = `Category: <i>${category}</i> <img class="redirect" src="https://www.csci571.com/hw/hw6/images/redirect.png">`;
+        categoryContainer.innerHTML = `Category: <i>${category}</i> <a href="${item.viewItemURL[0]}" target='_blank'><img class="redirect" id="redirect" src="https://csci571.com/hw/hw6/images/redirect.png"></a>`;
 
         const conditionContainer = document.createElement('p');
         conditionContainer.classList.add('condition-container');
         if (item.topRatedListing[0] === 'true') {
-            conditionContainer.innerHTML = `Condition: ${condition} <div class="condition-parent"><img class="condition" src="https://www.csci571.com/hw/hw6/images/topRatedImage.png"></div>`;
+            conditionContainer.innerHTML = `Condition: ${condition} <div class="condition-parent"><img class="condition" src="https://csci571.com/hw/hw6/images/topRatedImage.png"></div>`;
         } else {
             conditionContainer.innerHTML = `Condition: ${condition}`;
         }
@@ -179,22 +181,28 @@ function displayItems(data, keyword, outerResults, button) {
         outerResults.appendChild(resultContainer);
 
         // Create a click event listener for each result
-        resultContainer.addEventListener('click', function () {
-            // Access the Item ID from the data attribute
-            const itemId = resultContainer.getAttribute('item-id');
-            console.log(itemId)
+        resultContainer.addEventListener('click', function (event) {
+            console.log(event)
+            if (event.target.id === "redirect") {
+                return
+            } else {
+                // Access the Item ID from the data attribute
+                const itemId = resultContainer.getAttribute('item-id');
 
-            // Construct the Flask URL with the itemId
-            let url = `/searchItem?itemid=${encodeURIComponent(itemId)}`; // Replace with your actual Flask endpoint
+                // Construct the Flask URL with the itemId
+                let url = `/searchItem?itemid=${encodeURIComponent(itemId)}`; // Replace with your actual Flask endpoint
 
-            // Fetch the data using the constructed URL
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    // Handle the response data as needed
-                    displayItem(data)
-                })
-                .catch(error => console.error('Error:', error));     
+                // Fetch the data using the constructed URL
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the response data as needed
+                        displayItem(data)
+                        // Toggle the display of outerResults
+                        togglePage(outerResults, searchTitle, button)
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         });
 
         if (index >= 3) {
@@ -207,6 +215,8 @@ function displayItems(data, keyword, outerResults, button) {
     } else {
         button.style.display = 'block'
     }
+
+    page.style.display = ""
 }
 
 function checkImage(image, imageURL) {
@@ -262,9 +272,12 @@ function constructURL(queryString, minPriceInput, maxPriceInput, checkboxes, sel
         url += `ReturnsAcceptedOnly=true&`;
     }
 
+    let conditionCounter = 1;
+
     // Add each checked condition value to the URL
     checkedConditionValues.forEach(conditionValue => {
-        url += `Condition=${encodeURIComponent(conditionValue)}&`;
+        url += `Condition${conditionCounter}=${encodeURIComponent(conditionValue)}&`;
+        conditionCounter++;
     });
 
     if (url.endsWith('&')) {
@@ -275,32 +288,60 @@ function constructURL(queryString, minPriceInput, maxPriceInput, checkboxes, sel
 }
 
 function displayItem(data) {
-    console.log(data)
-    // const itemDetails = document.getElementById('div');
+    const table = document.getElementById('itemDetails');
+    const itemContainer = document.getElementById('itemContainer')
+    const tbody = table.querySelector('tbody');
 
-    // // Create a table for item details
-    // const table = document.createElement('table');
-    // table.classList.add('item-details-table');
+    itemContainer.style.display = "flex"
+    tbody.innerHTML = ''
 
-    // // Populate the table with item details (replace with your data)
-    // // You can loop through itemData and create rows and cells as needed
-    // // For example:
-    // // const row = table.insertRow();
-    // // const cell1 = row.insertCell(0);
-    // // const cell2 = row.insertCell(1);
-    // // cell1.textContent = 'Item Name';
-    // // cell2.textContent = itemData.itemName;
+    // Create table rows and cells for each detail
+    const details = [
+        ['Photo', `<img src="${data.Item.PictureURL[0]}" alt="Item Photo" width='300px'>`],
+        ['eBay Link', `<a href="${data.Item.ViewItemURLForNaturalSearch}" target="_blank">ebay Product Link</a>`],
+        ['Title', data.Item.Title],
+        ['Price', `$${data.Item.ConvertedCurrentPrice.Value.toFixed(2)}`],
+        ['Location', data.Item.Location],
+        ['Seller', data.Item.Seller.UserID],
+        ['Return Policy (US)', data.Item.ReturnPolicy.ReturnsAccepted],
+    ];
 
-    // // Create a button to close the overlay
-    // const closeButton = document.createElement('button');
-    // closeButton.textContent = 'Close Item Details';
-    // closeButton.addEventListener('click', function () {
-    //     // Remove the overlay when the button is clicked
-    //     overlay.remove();
-    // });
+    // Populate the table with details
+    details.forEach(([label, value]) => {
+        const row = tbody.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        cell1.innerHTML = `<strong>${label}</strong>`;
+        cell2.innerHTML = value;
+    });
 
-    // // Append the table and button to the overlay
-    // overlay.appendChild(closeButton);
-    // overlay.appendChild(table);
-    // document.body.appendChild(overlay);
+    // Populate ItemSpecifics dynamically
+    data.Item.ItemSpecifics.NameValueList.forEach(item => {
+        const row = tbody.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        cell1.innerHTML = `<strong>${item.Name}</strong>`;
+        cell2.textContent = item.Value;
+    });
 }
+
+function togglePage() {
+    const page = document.getElementById("page")
+    const itemContainer = document.getElementById("itemContainer")
+    const back = document.getElementById('back')
+
+    page.style.display = "none"
+
+    back.addEventListener('click', function () {
+        page.style.display = 'flex'
+        itemContainer.style.display = 'none'
+    })
+}
+
+document.getElementById('searchForm').addEventListener('reset', function () {
+    const page = document.getElementById("page")
+    const itemContainer = document.getElementById("itemContainer")
+
+    page.style.display = "none"
+    itemContainer.style.display = "none"
+})

@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class='title'>
-        <img src="https://www.csci571.com/hw/hw6/images/eBayLogo.png" alt="">
+        <img src="https://csci571.com/hw/hw6/images/eBayLogo.png" alt="">
         <h1>Shopping</h1>
     </div>
     <table>
@@ -65,7 +65,7 @@
             </tr>
         </form>
     </table>
-    <div class="page">
+    <div class="page" id="page">
         <div class="search-title" id="results">
             <!-- <p><b><span id="totalResultsFound"></span> Results found for <i><span id="searchKeyword"></span></i></b></p>
                 <hr> -->
@@ -74,8 +74,13 @@
             <!-- Result items will be added here dynamically -->
         </div>
         <button id="showMoreButton" class="button">Show More</button>
-        <div id="item-details">
-        </div>
+    </div>
+    <div id="itemContainer">
+        <h1 id="itemTitle">Item Details</h1>
+        <button id="back" class="button">Back to search results</button>
+        <table id="itemDetails">
+            <tbody></tbody>
+        </table>
     </div>
 </body>
 <script src="/static/script.js"></script>
