@@ -194,6 +194,10 @@ hr{
     margin-bottom: 10px;
 }
 
+#itemTitle{
+    margin-top: 20px;
+}
+
 #itemDetails {
     border-collapse: collapse;
     margin-bottom: 30px;

@@ -14,7 +14,6 @@ def home():
 def search():
     #Query parameters
     query_parameters = request.args
-    print(query_parameters)
     itemfilters = {}
     for key, value in query_parameters.items():
         if key in ['keyword', 'sortOrder']: continue

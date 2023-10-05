@@ -25,7 +25,6 @@ document.getElementById('searchForm').addEventListener('submit', function (e) {
     fetch(generatedURL)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
             displayItems(data, keyword, outerResults, button); //display results
         })
         .catch(error => console.error('Error:', error));
@@ -83,7 +82,6 @@ function updateSearchTitleNoResults(outerResults) {
 }
 
 function displayItems(data, keyword, outerResults, button) {
-    console.log(data)
     const totalResults = data.findItemsAdvancedResponse[0].paginationOutput[0].totalEntries[0];
     const results = data.findItemsAdvancedResponse[0].searchResult[0].item;
     const page = document.getElementById("page")
@@ -183,7 +181,6 @@ function displayItems(data, keyword, outerResults, button) {
 
         // Create a click event listener for each result
         resultContainer.addEventListener('click', function (event) {
-            console.log(event)
             if (event.target.id === "redirect") {
                 return
             } else {
@@ -198,7 +195,7 @@ function displayItems(data, keyword, outerResults, button) {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the response data as needed
-                        displayItem(data)
+                        displayItem(data, priceString)
                         // Toggle the display of outerResults
                         togglePage(outerResults, searchTitle, button)
                     })
@@ -305,7 +302,7 @@ function constructURL(queryString, minPriceInput, maxPriceInput, checkboxes, sel
     return url;
 }
 
-function displayItem(data) {
+function displayItem(data, priceString) {
     const table = document.getElementById('itemDetails');
     const itemContainer = document.getElementById('itemContainer')
     const tbody = table.querySelector('tbody');
@@ -318,7 +315,7 @@ function displayItem(data) {
         ['Photo', `<img src="${data.Item.PictureURL[0]}" alt="Item Photo" width='300px'>`],
         ['eBay Link', `<a href="${data.Item.ViewItemURLForNaturalSearch}" target="_blank">ebay Product Link</a>`],
         ['Title', data.Item.Title],
-        ['Price', `$${data.Item.ConvertedCurrentPrice.Value.toFixed(2)}`],
+        ['Price', `${priceString.split("Price: ")[1]}`],
         ['Location', data.Item.Location],
         ['Seller', data.Item.Seller.UserID],
         ['Return Policy (US)', data.Item.ReturnPolicy.ReturnsAccepted],
