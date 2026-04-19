@@ -152,21 +152,43 @@ function displayItems(data, keyword, outerResults, button) {
         resultDetails.classList.add('result-details');
 
         const titleContainer = document.createElement('p');
-        titleContainer.innerHTML = `<strong>${title}</strong>`;
+        const titleStrong = document.createElement('strong');
+        titleStrong.textContent = title;
+        titleContainer.appendChild(titleStrong);
 
         const categoryContainer = document.createElement('p');
-        categoryContainer.innerHTML = `Category: <i>${category}</i> <a href="${item.viewItemURL[0]}" target='_blank'><img class="redirect" id="redirect" src="https://csci571.com/hw/hw6/images/redirect.png"></a>`;
+        categoryContainer.appendChild(document.createTextNode('Category: '));
+        const categoryItalic = document.createElement('i');
+        categoryItalic.textContent = category;
+        categoryContainer.appendChild(categoryItalic);
+        categoryContainer.appendChild(document.createTextNode(' '));
+        const categoryLink = document.createElement('a');
+        categoryLink.href = item.viewItemURL[0];
+        categoryLink.target = '_blank';
+        const redirectImg = document.createElement('img');
+        redirectImg.className = 'redirect';
+        redirectImg.id = 'redirect';
+        redirectImg.src = 'https://csci571.com/hw/hw6/images/redirect.png';
+        categoryLink.appendChild(redirectImg);
+        categoryContainer.appendChild(categoryLink);
 
         const conditionContainer = document.createElement('p');
         conditionContainer.classList.add('condition-container');
+        conditionContainer.appendChild(document.createTextNode(`Condition: ${condition}`));
         if (item.topRatedListing[0] === 'true') {
-            conditionContainer.innerHTML = `Condition: ${condition} <div class="condition-parent"><img class="condition" src="https://csci571.com/hw/hw6/images/topRatedImage.png"></div>`;
-        } else {
-            conditionContainer.innerHTML = `Condition: ${condition}`;
+            const conditionParent = document.createElement('div');
+            conditionParent.className = 'condition-parent';
+            const conditionImg = document.createElement('img');
+            conditionImg.className = 'condition';
+            conditionImg.src = 'https://csci571.com/hw/hw6/images/topRatedImage.png';
+            conditionParent.appendChild(conditionImg);
+            conditionContainer.appendChild(conditionParent);
         }
 
         const priceContainer = document.createElement('p');
-        priceContainer.innerHTML = `<strong>${priceString}</strong>`;
+        const priceStrong = document.createElement('strong');
+        priceStrong.textContent = priceString;
+        priceContainer.appendChild(priceStrong);
 
         imageContainer.appendChild(image);
         resultDetails.appendChild(titleContainer);
@@ -311,32 +333,37 @@ function displayItem(data, priceString) {
     tbody.innerHTML = ''
 
     // Create table rows and cells for each detail
-    const details = [
-        ['Photo', `<img src="${data.Item.PictureURL[0]}" alt="Item Photo" width='300px'>`],
-        ['eBay Link', `<a href="${data.Item.ViewItemURLForNaturalSearch}" target="_blank">ebay Product Link</a>`],
-        ['Title', data.Item.Title],
-        ['Price', `${priceString.split("Price: ")[1]}`],
-        ['Location', data.Item.Location],
-        ['Seller', data.Item.Seller.UserID],
-        ['Return Policy (US)', data.Item.ReturnPolicy.ReturnsAccepted],
-    ];
-
-    // Populate the table with details
-    details.forEach(([label, value]) => {
+    function addRow(tbody, labelText, buildCell2) {
         const row = tbody.insertRow();
         const cell1 = row.insertCell(0);
         const cell2 = row.insertCell(1);
-        cell1.innerHTML = `<strong>${label}</strong>`;
-        cell2.innerHTML = value;
-    });
+        const strong = document.createElement('strong');
+        strong.textContent = labelText;
+        cell1.appendChild(strong);
+        buildCell2(cell2);
+    }
+
+    const photoImg = document.createElement('img');
+    photoImg.src = data.Item.PictureURL[0];
+    photoImg.alt = 'Item Photo';
+    photoImg.width = 300;
+    addRow(tbody, 'Photo', cell => cell.appendChild(photoImg));
+
+    const ebayLink = document.createElement('a');
+    ebayLink.href = data.Item.ViewItemURLForNaturalSearch;
+    ebayLink.target = '_blank';
+    ebayLink.textContent = 'ebay Product Link';
+    addRow(tbody, 'eBay Link', cell => cell.appendChild(ebayLink));
+
+    addRow(tbody, 'Title', cell => { cell.textContent = data.Item.Title; });
+    addRow(tbody, 'Price', cell => { cell.textContent = priceString.split("Price: ")[1]; });
+    addRow(tbody, 'Location', cell => { cell.textContent = data.Item.Location; });
+    addRow(tbody, 'Seller', cell => { cell.textContent = data.Item.Seller.UserID; });
+    addRow(tbody, 'Return Policy (US)', cell => { cell.textContent = data.Item.ReturnPolicy.ReturnsAccepted; });
 
     // Populate ItemSpecifics dynamically
     data.Item.ItemSpecifics.NameValueList.forEach(item => {
-        const row = tbody.insertRow();
-        const cell1 = row.insertCell(0);
-        const cell2 = row.insertCell(1);
-        cell1.innerHTML = `<strong>${item.Name}</strong>`;
-        cell2.textContent = item.Value;
+        addRow(tbody, item.Name, cell => { cell.textContent = item.Value; });
     });
 }
 

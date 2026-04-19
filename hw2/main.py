@@ -1,10 +1,14 @@
+import os
 from flask import Flask, render_template, request, send_from_directory
 from ebay_oauth_token import OAuthToken
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-client_id = "AbhinavP-hw2-PRD-a932e5ad5-0a4da37f"
-client_secret = "PRD-932e5ad59dbc-75e5-4cda-bacc-171b"
+client_id = os.environ.get('EBAY_CLIENT_ID')
+client_secret = os.environ.get('EBAY_CLIENT_SECRET')
 
 @app.route('/')
 def home():
@@ -28,7 +32,7 @@ def call(keyword, sortOrder, item_filters):
     endpoint = 'https://svcs.ebay.com/services/search/FindingService/v1'
 
     params = {
-        'OPERATION-NAME': 'findItemsAdvanced',  
+        'OPERATION-NAME': 'findItemsAdvanced',
         'SERVICE-VERSION': '1.0.0',
         'SECURITY-APPNAME': client_id,
         'RESPONSE-DATA-FORMAT': 'JSON',
@@ -40,7 +44,7 @@ def call(keyword, sortOrder, item_filters):
         'paginationInput.pageNumber': 1,
     }
 
-    # Add item filters 
+    # Add item filters
     params.update(item_filters)
 
     # print(params)
@@ -72,7 +76,7 @@ def getItem(ItemID):
     }
 
     params = {
-        'callname': 'GetSingleItem',  
+        'callname': 'GetSingleItem',
         'version': '967',
         'responseencoding': 'JSON',
         'siteid': '0',
@@ -85,4 +89,4 @@ def getItem(ItemID):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

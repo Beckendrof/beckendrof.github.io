@@ -1,28 +1,27 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const app = express();
 
-app.use(cors());
 app.use(cors({
     origin: 'http://localhost:4200'
-}))
+}));
 
 app.use(express.static("./dist/ebay"));
 
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb+srv://beckendrof:abhi2440@ebay.fvopspk.mongodb.net/?retryWrites=true&w=majority';
-app.get('/wishlistPost', express.json(), async (req, res) => {
+const url = process.env.MONGO_URI;
+app.post('/wishlistPost', express.json(), async (req, res) => {
     const client = await MongoClient.connect(url);
     try {
         const db = client.db('wishlist');
         const collection = db.collection('ebay-wishlist');
-        console.log(req.query); // Assuming the data is sent as JSON
 
-        const result = await collection.insertOne(req.query);
+        const result = await collection.insertOne(req.body);
         res.json({ message: 'Post created' });
     } catch (err) {
-        console.error(err);
+        console.error('wishlistPost error:', err.message);
         res.status(500).json({ error: 'An error occurred' });
     } finally {
         await client.close();
@@ -32,8 +31,8 @@ app.get('/wishlistPost', express.json(), async (req, res) => {
 app.get('/wishlistGet', async (req, res) => {
     try {
         const client = await MongoClient.connect(url);
-        const db = client.db('wishlist'); // Replace 'mydb' with your database name
-        const collection = db.collection('ebay-wishlist'); // Replace 'posts' with your collection name
+        const db = client.db('wishlist');
+        const collection = db.collection('ebay-wishlist');
         const posts = await collection.find({}).toArray();
         client.close();
         res.json(posts);
@@ -42,16 +41,17 @@ app.get('/wishlistGet', async (req, res) => {
     }
 });
 
-const { ObjectId } = require('mongodb'); // Import the ObjectId constructor
+const { ObjectId } = require('mongodb');
 
-app.get('/wishlistDel', async (req, res) => {
+app.delete('/wishlistDel', async (req, res) => {
     try {
+        const postId = req.query.q;
+        if (!postId || !ObjectId.isValid(postId)) {
+            return res.status(400).json({ error: 'Invalid ID' });
+        }
         const client = await MongoClient.connect(url);
         const db = client.db('wishlist');
         const collection = db.collection('ebay-wishlist');
-        const postId = req.query.q; // Assuming you send the post ID to delete in the request body
-
-        // Convert the postId to ObjectId
         const objectIdPostId = new ObjectId(postId);
 
         const result = await collection.deleteOne({ _id: objectIdPostId });
@@ -63,15 +63,13 @@ app.get('/wishlistDel', async (req, res) => {
 });
 
 
-
-
 // Axios instance with the eBay API configuration
 const ebayAxiosInstance = axios.create({
     baseURL: 'https://svcs.ebay.com/services/search/FindingService/v1',
     params: {
         'OPERATION-NAME': 'findItemsAdvanced',
         'SERVICE-VERSION': '1.0.0',
-        'SECURITY-APPNAME': 'AbhinavP-hw2-PRD-a932e5ad5-0a4da37f',
+        'SECURITY-APPNAME': process.env.EBAY_CLIENT_ID,
         'RESPONSE-DATA-FORMAT': 'JSON',
         'REST-PAYLOAD': '',
         'paginationInput.entriesPerPage': 50,
@@ -87,7 +85,7 @@ app.get('/getSimilarItems', async (req, res) => {
                 'OPERATION-NAME': "getSimilarItems",
                 'SERVICE-NAME': "MerchandisingService",
                 'SERVICE-VERSION': "1.1.0",
-                'CONSUMER-ID': "AbhinavP-hw2-PRD-a932e5ad5-0a4da37f",
+                'CONSUMER-ID': process.env.EBAY_CLIENT_ID,
                 'RESPONSE-DATA-FORMAT': "JSON",
                 'REST-PAYLOAD': "",
                 itemId: req.query.q,
@@ -95,22 +93,20 @@ app.get('/getSimilarItems', async (req, res) => {
             },
         });
 
-        // Handle the API response here
         const similarItems = response.data;
 
         res.json(similarItems);
     } catch (error) {
-        // Handle any errors that occur during the request
-        console.error('Error:', error);
+        console.error('getSimilarItems error:', error.message);
         res.status(500).json({ error: 'An error occurred' });
     }
 });
 
 app.get('/searchImage', async (req, res) => {
     try {
-        const apiKey = 'AIzaSyCw138VOl15GXLKsVaGPK_TDdpMpEB18-I';
-        const cx = '440bd904e1fcf48ea'; // Replace with your Custom Search Engine CX
-        const query = req.query.q;
+        const apiKey = process.env.GOOGLE_API_KEY;
+        const cx = process.env.GOOGLE_CX;
+        const query = encodeURIComponent(req.query.q || '');
         const num = 8;
         const imgSize = 'huge';
         const searchType = 'image';
@@ -121,7 +117,7 @@ app.get('/searchImage', async (req, res) => {
 
         res.json(response.data);
     } catch (error) {
-        console.error('Error making the API call:', error);
+        console.error('searchImage error:', error.message);
         res.status(500).json({ error: 'Failed to fetch data from the Google API' });
     }
 });
@@ -140,11 +136,10 @@ app.get('/search', async (req, res) => {
 
         const responseData = response.data;
 
-        // Process and transform the data to the desired format
         const transformedData = transformEbayApiResponse(responseData);
         res.json(transformedData);
     } catch (error) {
-        console.error(error);
+        console.error('search error:', error.message);
         res.status(500).json({ error: 'An error occurred while fetching data from eBay.' });
     }
 });
@@ -152,19 +147,19 @@ app.get('/search', async (req, res) => {
 // Function to transform eBay API response into the desired format
 function transformEbayApiResponse(responseData) {
     if (!responseData || !responseData.findItemsAdvancedResponse) {
-        return []; // No results found or unexpected response structure
+        return [];
     }
 
     const findItemsAdvancedResponse = responseData.findItemsAdvancedResponse[0];
 
     if (!findItemsAdvancedResponse || !findItemsAdvancedResponse.searchResult) {
-        return []; // No search results found or unexpected response structure
+        return [];
     }
 
     const searchResult = findItemsAdvancedResponse.searchResult[0];
 
     if (!searchResult || !searchResult.item) {
-        return []; // No items found or unexpected response structure
+        return [];
     }
 
     const items = searchResult.item;
@@ -199,15 +194,12 @@ function getShippingCost(item) {
 }
 
 app.get('/productDetails', async (req, res) => {
-    client_id = "AbhinavP-hw2-PRD-a932e5ad5-0a4da37f"
-    client_secret = "PRD-932e5ad59dbc-75e5-4cda-bacc-171b"
-    const ItemID = req.query.itemId; // Get the item ID from the query parameters
+    const client_id = process.env.EBAY_CLIENT_ID;
+    const client_secret = process.env.EBAY_CLIENT_SECRET;
+    const ItemID = req.query.itemId;
 
-    // Define the OAuthToken class
     class OAuthToken {
         constructor(client_id, client_secret) {
-            client_id = "AbhinavP-hw2-PRD-a932e5ad5-0a4da37f"
-            client_secret = "PRD-932e5ad59dbc-75e5-4cda-bacc-171b"
             this.client_id = client_id;
             this.client_secret = client_secret;
         }
@@ -233,7 +225,6 @@ app.get('/productDetails', async (req, res) => {
                 const response = await axios.post(url, data, { headers });
                 return response.data.access_token;
             } catch (error) {
-                console.log("error")
                 throw error;
             }
         }
@@ -266,21 +257,20 @@ app.get('/productDetails', async (req, res) => {
 app.get('/autocomplete', async (req, res) => {
 
     try {
-        const response = await axios.get('http://api.geonames.org/postalCodeSearchJSON?', {
+        const response = await axios.get('https://api.geonames.org/postalCodeSearchJSON?', {
             params: {
                 postalcode_startsWith: req.query.q,
                 maxRows: '5',
                 country: 'US',
-                username: 'beckendrof', // Replace with your Geonames API username
+                username: process.env.GEONAMES_USERNAME,
             },
         });
 
         const responseData = response.data;
-        // Extract postal codes
         const postalCodes = responseData.postalCodes.map(entry => entry.postalCode)
         res.json(postalCodes)
     } catch (error) {
-        console.error(error);
+        console.error('autocomplete error:', error.message);
         res.status(500).json({ error: 'An error occurred while fetching postal codes' });
     }
 });
